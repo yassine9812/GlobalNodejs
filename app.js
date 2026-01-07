@@ -60,6 +60,58 @@ app.post('/api/v1/tours/', (req, res) => {
   );
 });
 
+app.patch('/api/v1/tours/:id', (req, res) => {
+  const id = req.params.id;
+  const tour = tours.find((tour) => tour.id === parseInt(id));
+
+  if (!tour) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Tour not found',
+    });
+  }
+
+  const updatedTour = Object.assign(tour, req.body);
+
+  fs.writeFile(
+    `${__dirname}/dev-data/data/tours-simple.json`,
+    JSON.stringify(tours),
+    (err) => {
+      res.status(200).json({
+        status: 'success',
+        data: {
+          tour: updatedTour,
+        },
+      });
+    },
+  );
+});
+
+app.delete('/api/v1/tours/:id', (req, res) => {
+  const id = req.params.id;
+  const tourIndex = tours.findIndex((tour) => tour.id === parseInt(id));
+
+  if (tourIndex === -1) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Tour not found',
+    });
+  }
+
+  const deletedTour = tours.splice(tourIndex, 1)[0];
+
+  fs.writeFile(
+    `${__dirname}/dev-data/data/tours-simple.json`,
+    JSON.stringify(tours),
+    (err) => {
+      res.status(204).json({
+        status: 'success',
+        data: null,
+      });
+    },
+  );
+});
+
 const port = 3000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
