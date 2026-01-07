@@ -1,8 +1,33 @@
-# Node modules
+# Dependencies
 node_modules/
 
-# Environment variables file
+# Environment variables
 .env
+.env.local
+.env.development
+.env.production
 
-# VSCode settings folder
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
 .vscode/
+.idea/
+
+# Build / runtime output
+dist/
+build/
+
+# Ignore public assets (HTML, images, etc.)
+public/
+
+# Ignore only specific folders inside dev-data
+dev-data/img/
+dev-data/templates/
