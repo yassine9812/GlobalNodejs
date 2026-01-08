@@ -1,17 +1,38 @@
 const fs = require('fs');
 const express = require('express');
+const morgan = require('morgan'); // For logging HTTP requests
 
 const app = express();
 
+//1. Middlewares
+
+app.use(morgan('dev')); // Logging middleware
 app.use(express.json());
+
+// Custom middleware
+app.use((req, res, next) => {
+  console.log('Hello from the middleware 👋');
+  next();
+});
+
+// Middleware to add request time
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+});
 
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`),
 );
 
+
+//2. Route Handlers
+
 const getAllTours = (req, res) => {
+  console.log(req.requestTime)
   res.status(200).json({
     status: 'success',
+    requestTime: req.requestTime, // Added request time to the response
     results: tours.length,
     data: {
       tours,
@@ -110,6 +131,8 @@ const deleteTour = (req, res) => {
   );
 };
 
+//3. Routes
+
 app.route('/api/v1/tours').get(getAllTours).post(createTour);
 
 app
@@ -117,6 +140,8 @@ app
   .get(getTour)
   .patch(updateTour)
   .delete(deleteTour);
+
+//4. Start Server
 
 const port = 3000;
 app.listen(port, () => {
